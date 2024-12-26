@@ -1,12 +1,17 @@
 import { SignedIn, SignedOut, SignIn, SignInButton, SignOutButton } from "@clerk/nextjs";
 import Head from "next/head";
 import Link from "next/link";
+import { useEffect } from "react";
 
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
-
+  const { data: postsData, isSuccess } = api.posts.getAll.useQuery();
+  useEffect(() => {
+    if (postsData && isSuccess) {
+      console.log("data retrieved successfully");
+    }
+  })
   return (
     <>
       <Head>
@@ -22,6 +27,9 @@ export default function Home() {
         <SignedIn>
           <SignOutButton />
         </SignedIn>
+        </div>
+        <div>
+          {postsData?.map((post) => (<div key={post.id}>{post.content}</div>))}
         </div>
       </main>
     </>
