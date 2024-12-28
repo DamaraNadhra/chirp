@@ -18,6 +18,9 @@ const config = {
     defaultLocale: "en",
   },
   transpilePackages: ["geist"],
+  images: {
+    domains: ["img.clerk.com"],
+  }
 };
 
 export default config;
