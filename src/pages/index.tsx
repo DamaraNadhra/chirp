@@ -20,11 +20,11 @@ const CreatePostWizard = () => {
   const { mutate: createPost, isPending: isPosting } = api.posts.create.useMutation({
     onSuccess: () => {
       setInput("");
-      ctx.posts.invalidate();
+      void ctx.posts.invalidate();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
-      if (errorMessage && errorMessage[0]) {
+      if (Array.isArray(errorMessage) && errorMessage[0]) {
         toast.error(errorMessage[0]);
       } else {
         toast.error("Something went wrong while creating the post");
