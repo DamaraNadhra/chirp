@@ -2,7 +2,23 @@ import { clerkClient, User } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
+
+import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
+import { Redis } from "@upstash/redis"; // see below for cloudflare and fastly adapters
+
+// Create a new ratelimiter, that allows 3 requests per 1 minute
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(3, "1 m"),
+  analytics: true,
+  /**
+   * Optional prefix for the keys used in redis. This is useful if you want to share a redis
+   * instance with other applications and want to avoid key collisions. The default prefix is
+   * "@upstash/ratelimit"
+   */
+  prefix: "@upstash/ratelimit",
+});
 
 const filterUserForClient = (user: User) => {
   return {
@@ -16,6 +32,9 @@ export const postsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const posts =  await ctx.db.post.findMany({ 
       take: 100,
+      orderBy: [
+        { createdAt: "desc"}
+      ]
     });
 
     const users = (await (await clerkClient()).users.getUserList({
@@ -36,6 +55,20 @@ export const postsRouter = createTRPCRouter({
           ...author,
           username: author.username
         }
+      }
+    })
+  }),
+  create: privateProcedure.input(z.object({
+    content: z.string().emoji().min(1).max(100)
+  })).mutation(async ({ ctx, input }) => {
+    const authorId = ctx.currentUser
+
+    const { success } = await ratelimit.limit(authorId);
+
+    const post = await ctx.db.post.create({
+      data: {
+        authorId,
+        content: input.content,
       }
     })
   })

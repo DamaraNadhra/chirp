@@ -1,28 +1,51 @@
 import { SignedIn, SignedOut, SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { api, RouterOutputs } from "~/utils/api";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"
 import Image from "next/image";
+import { LoadingPage, LoadingSpinner } from "~/components/loading";
 
 dayjs.extend(relativeTime)
 const CreatePostWizard = () => {
   const {user} =  useUser();
 
+  const ctx = api.useUtils();
+
+  const { mutate: createPost, isPending: isPosting } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setInput("");
+      ctx.posts.invalidate();
+    }
+  });
+
+  const [input, setInput] = useState<string>("");
+
   if (!user) return null;
 
-  return <div className="flex gap-3">
+  return <div className="flex justify-between w-full flex-row gap-3">
+    <div className="flex flex-row gap-3">
     <Image 
       src={user.imageUrl} 
       alt="Profile Image" 
       className="rounded-full w-14 h-14" 
       width={56} 
       height={56} /> 
-    <input placeholder="Type something!" className="bg-transparent outline-none grow"/>
+    <input 
+      placeholder="Type something!" 
+      className="bg-transparent outline-none grow"
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      disabled={isPosting}
+      />
+    </div>
+    <button 
+      className=""
+      onClick={() => createPost({ content: input })}>Post</button>
   </div>
 }
 
@@ -30,21 +53,40 @@ type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 const PostView = (props: PostWithUser) => {
   const { post, author } = props;
   return (
-    <div key={post.authorId}  className="flex gap-3 p-4 border-b border-slate-400">
+    <div key={post.authorId}  className="flex gap-3 p-4 border-b border-slate-600">
       <Image alt={`@${author.username}`} src={author.imageUrl} className="rounded-full h-14 w-14" width={56} height={56} />
       <div className="flex flex-col font-segoe">
         <div className="flex gap-1 text-gray-500">
           <span>{`@${author.username} `}</span>
           <span>{` · ${dayjs(post.createdAt).fromNow()}`}</span>
         </div>
-        <span>{post.content}</span>
+        <span className="text-xl">{post.content}</span>
       </div>
     </div>
   )
 }
 
+const Feed = () => {
+  const { data: postsData, isSuccess, isLoading: postsLoading } = api.posts.getAll.useQuery();
+
+  if (postsLoading) return <LoadingPage />;
+
+  if (!postsData) return <div>Something went wrong</div>
+
+  return (
+  <div className="flex flex-col">
+    {postsData?.map((fullPost) => (
+      <PostView {...fullPost} key={fullPost.post.id} />))}
+  </div>
+  )
+}
+
 export default function Home() {
-  const { data: postsData, isSuccess } = api.posts.getAll.useQuery();
+  const { isLoaded: userLoaded } = useUser();
+
+  api.posts.getAll.useQuery();
+  // return empty div if user isn't loaded yet
+  if (!userLoaded) return <div />;
   return (
     <>
       <Head>
@@ -53,23 +95,20 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex justify-center h-screen">
-        <div className="w-full h-full border-slate-400 md:max-w-2xl border-x">
-          <div className="flex p-4 border-b border-slate-400">
+        <div className="w-full h-full border-slate-600 md:max-w-2xl border-x">
+          <div className="flex p-4 border-b border-slate-600">
             <div className="flex justify-center">
               <SignedOut>
                 <SignInButton />
               </SignedOut>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center w-full">
               <SignedIn>
                 <CreatePostWizard />
               </SignedIn>
             </div>
           </div>
-        <div className="flex flex-col">
-          {postsData?.map((fullPost) => (
-            <PostView {...fullPost} key={fullPost.post.id} />))}
-        </div>
+        <Feed />
         </div>
       </main>
     </>
