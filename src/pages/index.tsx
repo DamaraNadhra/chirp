@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime)
 const CreatePostWizard = () => {
@@ -20,6 +21,14 @@ const CreatePostWizard = () => {
     onSuccess: () => {
       setInput("");
       ctx.posts.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Something went wrong while creating the post");
+      }
     }
   });
 
@@ -41,11 +50,24 @@ const CreatePostWizard = () => {
       value={input}
       onChange={(e) => setInput(e.target.value)}
       disabled={isPosting}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (input !== "") {
+            createPost({ content: input });
+          }
+        }
+      }}
       />
     </div>
-    <button 
-      className=""
-      onClick={() => createPost({ content: input })}>Post</button>
+    {input !== "" && !isPosting && (
+      <button className="" onClick={() => createPost({ content: input })} disabled={isPosting}>Post</button>
+      )}
+    {isPosting && (
+      <div className="flex justify-center items-center">
+        <LoadingSpinner size={25}/>
+      </div>
+      )}
   </div>
 }
 

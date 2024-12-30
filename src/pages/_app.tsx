@@ -13,10 +13,13 @@ import {
   UserButton
 } from '@clerk/nextjs'
 
+import { Toaster } from "react-hot-toast"
+
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider>
       <div className={GeistSans.className}>
+        <Toaster position="bottom-center"/>
         <Component {...pageProps} />
       </div>
     </ClerkProvider>
