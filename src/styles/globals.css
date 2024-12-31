@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 body {
-    @apply bg-black text-slate-100;
+    @apply bg-black text-slate-100 font-segoe;
+
+    overscroll-behavior: none;
 
 }
+
+@font-face {
+    font-family: 'WL Royal Flutter';
+    src: url('/fonts/WL-Royal-Flutter-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
