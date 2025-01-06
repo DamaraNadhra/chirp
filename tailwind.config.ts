@@ -7,12 +7,12 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
-        segoe: ['"Segoe UI"', 'sans-serif'],
-        royal: ['WL Royal Flutter', 'serif'],
+        segoe: ['"Segoe UI"', "sans-serif"],
+        royal: ["WL Royal Flutter", "serif"],
       },
       colors: {
         customGray: "#70767b", // Add your custom color
-        twitterBlue: '#1DA1F2',
+        twitterBlue: "#1DA1F2",
       },
     },
   },

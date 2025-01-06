@@ -2,7 +2,11 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  privateProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis"; // see below for cloudflare and fastly adapters
@@ -22,80 +26,99 @@ const ratelimit = new Ratelimit({
   prefix: "@upstash/ratelimit",
 });
 const addUserDataToPosts = async (posts: Post[]) => {
-  const users = (await (await clerkClient()).users.getUserList({
-    userId: posts.map((post) => post.authorId),
-    limit: 100
-  })).data.map(filterUserForClient)
-  
+  const users = (
+    await (
+      await clerkClient()
+    ).users.getUserList({
+      userId: posts.map((post) => post.authorId),
+      limit: 100,
+    })
+  ).data.map(filterUserForClient);
+
   return posts.map((post) => {
     const author = users.find((user) => user.id === post.authorId);
 
-    if (!author?.username) throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR", 
-      message: "author not found"
-    })
+    if (!author?.username)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "author not found",
+      });
 
     return {
       post,
       author: {
         ...author,
-        username: author.username
-      }
-    }});
-}
+        username: author.username,
+      },
+    };
+  });
+};
 
 export const postsRouter = createTRPCRouter({
-  getById: publicProcedure.input(z.object({
-    id: z.string()
-  })).query(async ({ ctx, input }) => {
-    const post = await ctx.db.post.findUnique({ where: { id: input.id }})
-    
-    if (!post) throw new TRPCError({
-      code: "NOT_FOUND"
-    })
+  getById: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const post = await ctx.db.post.findUnique({ where: { id: input.id } });
 
-    return (await addUserDataToPosts([post]))[0];
-  }),
+      if (!post)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+
+      return (await addUserDataToPosts([post]))[0];
+    }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const posts =  await ctx.db.post.findMany({ 
+    const posts = await ctx.db.post.findMany({
       take: 100,
-      orderBy: [
-        { createdAt: "desc"}
-      ]
+      orderBy: [{ createdAt: "desc" }],
     });
     return addUserDataToPosts(posts);
-    
   }),
 
-  getPostByUserId: publicProcedure.input(z.object({
-    userId: z.string(),
-  })).query(async ({ ctx, input }) => {
-    return await ctx.db.post.findMany({
-      where: {
-        authorId: input.userId,
-      },
-      take: 100,
-      orderBy: [{ createdAt: "desc"}]
-    }).then(addUserDataToPosts)
-  }),
+  getPostByUserId: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.post
+        .findMany({
+          where: {
+            authorId: input.userId,
+          },
+          take: 100,
+          orderBy: [{ createdAt: "desc" }],
+        })
+        .then(addUserDataToPosts);
+    }),
 
-  create: privateProcedure.input(z.object({
-    content: z.string().emoji().min(1).max(100)
-  })).mutation(async ({ ctx, input }) => {
-    const authorId = ctx.currentUser
+  create: privateProcedure
+    .input(
+      z.object({
+        content: z.string().min(1).max(100),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const authorId = ctx.currentUser;
 
-    const { success } = await ratelimit.limit(authorId);
+      const { success } = await ratelimit.limit(authorId);
 
-    if (!success) throw new TRPCError({
-      code: "TOO_MANY_REQUESTS"
-    })
+      if (!success)
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+        });
 
-    const post = await ctx.db.post.create({
-      data: {
-        authorId,
-        content: input.content,
-      }
-    })
-  })
+      const post = await ctx.db.post.create({
+        data: {
+          authorId,
+          content: input.content,
+        },
+      });
+    }),
 });

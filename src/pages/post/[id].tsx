@@ -8,13 +8,12 @@ import { GetStaticProps, NextPage } from "next";
 import { PageLayout } from "~/components/layout";
 import { PostView } from "~/components/postview";
 
-
 const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data, isLoading} = api.posts.getById.useQuery({ id });
-  
+  const { data, isLoading } = api.posts.getById.useQuery({ id });
+
   const { isLoaded: userLoaded } = useUser();
 
-  if (!data || isLoading) return <div>Loading....</div>
+  if (!data || isLoading) return <div>Loading....</div>;
 
   api.posts.getAll.useQuery();
   // return empty div if user isn't loaded yet
@@ -29,13 +28,12 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
       </PageLayout>
     </>
   );
-}
+};
 
 export const getStaticProps: GetStaticProps = async (context) => {
-
   const ssg = generateSSGHelper();
   const id = context.params?.id;
-  if (typeof id !== 'string') throw new Error("no id");
+  if (typeof id !== "string") throw new Error("no id");
 
   await ssg.posts.getById.prefetch({ id });
 
@@ -43,12 +41,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
     props: {
       trpcState: ssg.dehydrate(),
       id,
-    }
-  }
-}
+    },
+  };
+};
 
 export const getStaticPaths = () => {
-  return { paths: [], fallback: "blocking"};
-}
+  return { paths: [], fallback: "blocking" };
+};
 
 export default SinglePostPage;

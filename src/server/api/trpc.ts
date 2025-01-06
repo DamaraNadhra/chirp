@@ -25,8 +25,6 @@ import { db } from "~/server/db";
 
 type CreateContextOptions = Record<string, never>;
 
-
-
 /**
  * This is the actual context you will use in your router. It will be used to process every request
  * that goes through your tRPC endpoint.
@@ -34,12 +32,12 @@ type CreateContextOptions = Record<string, never>;
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = (opts: CreateNextContextOptions) => {
-  const {req} = opts;
+  const { req } = opts;
 
-  const { userId } = getAuth(req)
+  const { userId } = getAuth(req);
   return {
     db,
-    currentUser: userId
+    currentUser: userId,
   };
 };
 
@@ -121,7 +119,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
   if (!ctx.currentUser) {
     throw new TRPCError({
-      code: "UNAUTHORIZED"
+      code: "UNAUTHORIZED",
     });
   }
 

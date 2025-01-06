@@ -9,7 +9,7 @@ import { profileRouter } from "./routers/profile";
  */
 export const appRouter = createTRPCRouter({
   posts: postsRouter,
-  profiles: profileRouter
+  profiles: profileRouter,
 });
 
 // export type definition of API

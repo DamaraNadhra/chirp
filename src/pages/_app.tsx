@@ -12,10 +12,10 @@ import {
   SignInButton,
   SignedIn,
   SignedOut,
-  UserButton
-} from '@clerk/nextjs'
+  UserButton,
+} from "@clerk/nextjs";
 
-import { Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast";
 import Head from "next/head";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
@@ -27,7 +27,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <link rel="icon" href="/chirpLogo.png" />
       </Head>
       <div className={GeistSans.className}>
-        <Toaster position="bottom-center"/>
+        <Toaster position="bottom-center" />
         <Component {...pageProps} />
       </div>
     </ClerkProvider>
