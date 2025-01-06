@@ -1,16 +1,12 @@
 import Image from "next/image";
-import { useRouter } from "next/router";
-import type { PropsWithChildren } from "react";
 import chirpLogo from "src/images/chirpLogo.png"
 import { NavigationButton } from "./navbutton";
 import { useUser } from "@clerk/nextjs";
 
 export const NavigationBar = () => {
-  const router = useRouter();
 
   const { user } = useUser();
 
-  const isActive = (path: string) => router.pathname === path ? "font-[650] " : "";
   return (
     <div className="flex fixed top-0">
       <nav aria-label="Primary" role="navigation" className="flex flex-col justify-start text-slate-200">

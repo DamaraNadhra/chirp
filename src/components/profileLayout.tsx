@@ -1,8 +1,6 @@
-import Head from "next/head";
 import { api } from "~/utils/api";
 
-import {  NextPage } from "next";
-import { PageLayout } from "~/components/layout";
+import type { NextPage } from "next";
 import Image from "next/image";
 
 import dayjs from "dayjs";
@@ -34,14 +32,10 @@ const ProfileButtons: React.FC<ProfileButtonProps> = ({ link, size, children}) =
     <Link href={link} className="flex flex-col flex-grow">
       <span className={`pt-5 pb-3 hover:bg-white hover:bg-opacity-10 ${isActive(link) ? "text-white" : "text-customGray"}`}>{children}</span>
       <div className="flex flex-row justify-center">
-        {isActive(link) && <div className={`bg-[#1d9bf0] rounded-full py-[2px]`} style={{ width: size || '9rem'}}></div>}
+        {isActive(link) && <div className={`bg-[#1d9bf0] rounded-full py-[2px]`} style={{ width: size ?? '9rem'}}></div>}
       </div>
     </Link>
   )
-}
-interface ProfilePageProps {
-    username: string;
-    children?: React.ReactNode;
 }
 
 export const ProfilePageLayout: NextPage<{ username: string }> = ({

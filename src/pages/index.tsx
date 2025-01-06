@@ -1,18 +1,14 @@
 import {
   SignedIn,
   SignedOut,
-  SignIn,
   SignInButton,
-  SignOutButton,
   SignUpButton,
   useUser,
 } from "@clerk/nextjs";
-import Head from "next/head";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import chirpLogo from "src/images/chirpLogo.png";
 
-import { api, RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -100,7 +96,6 @@ const CreatePostWizard = () => {
 const Feed = () => {
   const {
     data: postsData,
-    isSuccess,
     isLoading: postsLoading,
   } = api.posts.getAll.useQuery();
 

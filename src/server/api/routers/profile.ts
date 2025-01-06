@@ -1,7 +1,5 @@
-import { clerkClient, User } from "@clerk/nextjs/server";
+import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
-import { userAgent } from "next/server";
-import { P } from "node_modules/@upstash/redis/zmscore-Dc6Llqgr.mjs";
 import { z } from "zod";
 
 import {
@@ -18,7 +16,7 @@ export const profileRouter = createTRPCRouter({
         username: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const users = await (
         await clerkClient()
       ).users.getUserList({
@@ -58,7 +56,7 @@ export const profileRouter = createTRPCRouter({
         userId: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       const client = await clerkClient();
       const response = await client.users.updateUser(input.userId, {
         username: input.username,
@@ -73,7 +71,7 @@ export const profileRouter = createTRPCRouter({
         userId: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       const client = await clerkClient();
       const response = await client.users.updateUserMetadata(input.userId, {
         unsafeMetadata: {
@@ -90,7 +88,7 @@ export const profileRouter = createTRPCRouter({
         userId: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       const client = await clerkClient();
       const response = await client.users.updateUserMetadata(input.userId, {
         unsafeMetadata: {

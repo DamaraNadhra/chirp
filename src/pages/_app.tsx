@@ -3,17 +3,10 @@ import { type AppType } from "next/app";
 
 import { api } from "~/utils/api";
 
-import chirpLogo from "src/images/chirpLogonobg.png";
 
 import "~/styles/globals.css";
 
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import { Toaster } from "react-hot-toast";
 import Head from "next/head";

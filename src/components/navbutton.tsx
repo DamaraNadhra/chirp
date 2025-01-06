@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import React, { PropsWithChildren } from "react";
 
 interface NavigationButtonProps {
     symbolFocus: string
@@ -15,6 +14,7 @@ export const NavigationButton: React.FC<NavigationButtonProps> = ({ symbolFocus,
         const pathname = router.pathname;
         if (pathname === "/[slug]") {
             const { slug } = router.query;
+            if (typeof slug !== "string") throw new Error("invalid slug");
             return `/${slug}` === path
         }
         return pathname === path;

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { api, RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 
 import dayjs from "dayjs";
 import Image from "next/image";
@@ -35,7 +35,7 @@ export const PostView = (props: PostWithUser) => {
     // Replace long units with short ones
     return relativeTime
       .split(" ")
-      .map((word) => shortFormats[word] || word)
+      .map((word) => shortFormats[word] ?? word)
       .join("");
   }
   return (

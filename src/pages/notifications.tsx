@@ -1,13 +1,11 @@
 import { useUser } from "@clerk/nextjs";
-
-  
 import { PageLayout } from "~/components/layout";
 
-export default function Explore() {
+export default function Notifications() {
 
   return (
       <PageLayout>
-        <div>Yowww</div>
+        <div>Notifications</div>
       </PageLayout>
     );
   

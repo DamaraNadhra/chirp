@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import { api } from "~/utils/api";
 
-import { GetStaticProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";

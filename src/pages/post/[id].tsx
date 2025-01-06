@@ -4,7 +4,7 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
-import { GetStaticProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { PageLayout } from "~/components/layout";
 import { PostView } from "~/components/postview";
 

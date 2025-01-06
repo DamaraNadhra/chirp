@@ -11,7 +11,7 @@ import {
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis"; // see below for cloudflare and fastly adapters
 import { filterUserForClient } from "~/server/helpers/filterForUserClient";
-import { Post } from "@prisma/client";
+import type { Post } from "@prisma/client";
 
 // Create a new ratelimiter, that allows 3 requests per 1 minute
 const ratelimit = new Ratelimit({
@@ -120,5 +120,6 @@ export const postsRouter = createTRPCRouter({
           content: input.content,
         },
       });
+      return post;
     }),
 });
