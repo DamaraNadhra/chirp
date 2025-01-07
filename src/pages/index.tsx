@@ -122,18 +122,18 @@ export default function Home() {
     <>
       <SignedOut>
         <div className="flex flex-row gap-14">
-          <Image src={chirpLogo} alt="chirp Logo" width={600} height={96} />
+          <Image src={chirpLogo} alt="chirp Logo" width={700} height={700} className="ml-14 mt-14" />
           <div className="flex flex-col gap-4">
             <div className="h-48"></div>
-            <span className="inline-block scale-x-125 font-segoe text-4xl font-extrabold">
+            <span className="inline-block scale-x-[1.20] scale-y-[1.10] font-segoe text-5xl font-[800]">
               Hear the bird Chirps!
             </span>
-            <div className="mt-6 scale-x-125 justify-center text-xl font-extrabold">
+            <div className="mt-10 ml-3 scale-x-125 justify-center text-2xl font-extrabold">
               Join today.
             </div>
             <div className="-ml-12">
               <SignUpButton>
-                <button className="rounded-full bg-twitterBlue px-16 py-2 text-sm font-semibold text-slate-200 hover:bg-opacity-95">
+                <button className="rounded-full bg-twitterBlue px-20 py-2 text-base font-semibold text-slate-200 hover:bg-opacity-95">
                   Create account
                 </button>
               </SignUpButton>
@@ -143,7 +143,7 @@ export default function Home() {
             </span>
             <div className="-ml-12">
               <SignInButton>
-                <button className="rounded-full border-[1px] border-customGray px-24 py-2 text-sm text-twitterBlue hover:bg-white hover:bg-opacity-5">
+                <button className="rounded-full border-[1px] border-customGray px-28 py-2 text-base text-twitterBlue hover:bg-white hover:bg-opacity-5">
                   Sign in
                 </button>
               </SignInButton>
