@@ -58,6 +58,7 @@ const ProfilePage: NextPage<{ username: string }> = ({
       <PageLayout>
         <ProfilePageLayout username={username} />
         <ProfileFeed userId={data.id} />
+        <div className="flex flex-grow border-x border-gray-700"></div>
       </PageLayout>
     </>
   );

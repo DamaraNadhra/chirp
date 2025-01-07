@@ -64,38 +64,23 @@ export const profileRouter = createTRPCRouter({
       return response;
     }),
 
-    updateFollowing: privateProcedure
-    .input(
-      z.object({
-        newAmount: z.number(),
-        userId: z.string(),
-      }),
-    )
-    .mutation(async ({ input }) => {
+    editUnsafeMetadata: privateProcedure.input(z.object({
+      userId: z.string(),
+      followers: z.number().optional(),
+      following: z.number().optional(),
+      description: z.string(),
+    })).mutation(async ({ input }) => {
       const client = await clerkClient();
+
       const response = await client.users.updateUserMetadata(input.userId, {
         unsafeMetadata: {
-          following: input.newAmount,
-        },
-      });
+          followers: input.followers,
+          following: input.following,
+          description: input.description,
+        }
+      })
+
       return response;
-    }),
-  
-    updateFollowers: privateProcedure
-    .input(
-      z.object({
-        newAmount: z.number(),
-        userId: z.string(),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const client = await clerkClient();
-      const response = await client.users.updateUserMetadata(input.userId, {
-        unsafeMetadata: {
-          followers: input.newAmount,
-        },
-      });
-      return response;
-    }),
+    })
 
 });

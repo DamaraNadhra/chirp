@@ -6,7 +6,7 @@ export const PageLayout = (props: PropsWithChildren) => {
   return (
     <main>
     <div className="flex h-screen w-screen justify-start">
-      <div className="w-24"></div>
+      <div className="w-36"></div>
       <div className="w-[18%] relative">
       <NavigationBar />
       </div>

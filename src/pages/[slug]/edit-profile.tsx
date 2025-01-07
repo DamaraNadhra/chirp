@@ -13,8 +13,9 @@ import Link from "next/link";
 const EditProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const [newUsername, setNewUsername] = useState<string>("");
   const [newDescription, setDescription] = useState<string>("");
-  const [newFollowing, setFollowing] = useState<number>(0);
-  const [newFollowers, setFollowers] = useState<number>(0);
+  const [newFollowing, setFollowing] = useState<number>();
+  const [newFollowers, setFollowers] = useState<number>();
+  
   const { data: userData, isLoading } = api.profiles.getUserByUsername.useQuery(
     { username },
   );
@@ -22,12 +23,8 @@ const EditProfilePage: NextPage<{ username: string }> = ({ username }) => {
   if (!userData || isLoading) return <div>Loading...</div>;
 
   const { mutate: changeUsername } = api.profiles.changeUsername.useMutation();
-
-  const { mutate: changeDesc } = api.profiles.changeDescription.useMutation();
-
-  const { mutate: updateFollowers } = api.profiles.updateFollowers.useMutation();
-
-  const { mutate: updateFollowing } = api.profiles.updateFollowing.useMutation();
+  
+  const { mutate: editMetadata } = api.profiles.editUnsafeMetadata.useMutation();
   return (
     <>
       <Head>
@@ -53,25 +50,12 @@ const EditProfilePage: NextPage<{ username: string }> = ({ username }) => {
                       userId: userData.id,
                     });
                   }
-                  if (newDescription !== "") {
-                    changeDesc({
-                      description: newDescription,
-                      userId: userData.id,
-                    });
-                  }
-
-                  if (newFollowers !== 0) {
-                    updateFollowers({
-                      newAmount: newFollowers,
-                      userId: userData.id
-                    })
-                  }
-                  if (newFollowing !== 0) {
-                    updateFollowing({
-                      newAmount: newFollowing,
-                      userId: userData.id
-                    })
-                  }
+                  editMetadata({
+                    userId: userData.id,
+                    description: newDescription,
+                    following: newFollowing,
+                    followers: newFollowers
+                  })
                 }}
               >
                 Save

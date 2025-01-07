@@ -51,14 +51,14 @@ const CreatePostWizard = () => {
         <Image
           src={user.imageUrl}
           alt="Profile Image"
-          className="h-9 w-9 rounded-full"
+          className="h-11 w-11 rounded-full"
           width={56}
           height={56}
         />
         <input
           id="inputWizard"
           placeholder="What is happening?!"
-          className="grow bg-transparent outline-none placeholder-customGray"
+          className="grow bg-transparent outline-none placeholder-customGray placeholder:text-xl"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={isPosting}
@@ -76,7 +76,7 @@ const CreatePostWizard = () => {
         <div className="mt-3">
         <button
           id="submitButton"
-          className={`text-[13px] font-semibold bg-white text-black rounded-full px-3 py-[6px] ${input.trim() ? "hover:bg-opacity-95" : "pointer-events-none disabled:bg-opacity-50"}`}
+          className={`text-base font-semibold bg-white text-black rounded-full px-3 py-[6px] ${input.trim() ? "hover:bg-opacity-95" : "pointer-events-none disabled:bg-opacity-50"}`}
           onClick={() => createPost({ content: input })}
           disabled={!input.trim()}
         >
@@ -159,6 +159,7 @@ export default function Home() {
             </div>
           </div>
           <Feed />
+          <div className="flex flex-grow border-x border-gray-700"></div>
         </PageLayout>
       </SignedIn>
     </>
